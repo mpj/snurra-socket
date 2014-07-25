@@ -1,0 +1,28 @@
+{
+  "name": "ws-json-client-stream",
+  "version": "1.0.0",
+  "description": "A wrapper around the ws npm module that adds JSON-parsing stream interface.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "prepublish": "coffee --bare --compile *.coffee"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:mpj/ws-json-client-stream.git"
+  },
+  "devDependencies": {
+    "mocha": "~1.20.1",
+    "chai": "~1.9.1",
+    "coffee-script": "~1.7.1",
+    "sinon": "~1.10.3",
+    "coffee-errors": "~0.8.6"
+  },
+  "author": "Mattias Petter Johansson <mpj@spotify.com>",
+  "license": "MIT",
+  "dependencies": {
+    "highland": "~1.29.0",
+    "duplexify": "~3.2.0",
+    "es6-promise": "~1.0.0"
+  }
+}

@@ -1,0 +1,4 @@
+*.coffee
+test
+.DS_store
+npm-debug.log

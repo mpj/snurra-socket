@@ -1,4 +1,4 @@
-spotify-virtual-songs-list
+ws-json-client-stream
 ==========================
 
-A wrapper around spotify-live and spotify-events that adds support for incrementally loading lists.
+A wrapper around the ws npm module that adds JSON-parsing stream interface.
