@@ -6,7 +6,7 @@ chai = require 'chai'
 expect = chai.expect
 chai.should()
 
-constructor = require '../index'
+constructor = require '../src/index'
 
 describe 'ws-json-client-stream', ->
   clock = null
@@ -20,7 +20,7 @@ describe 'ws-json-client-stream', ->
     ws =
       _handlers: {}
       on: sinon.spy (eventName, fn) -> ws._handlers[eventName] = fn
-      emit: (eventName, value) -> ws._handlers[eventName](value)
+      emit: (eventName, value)      -> ws._handlers[eventName](value)
       send: sinon.stub()
     clock = sinon.useFakeTimers()
 

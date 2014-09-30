@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "prepublish": "coffee --bare --compile *.coffee"
+    "prepublish": "coffee --bare --compile *.coffee src/*.coffee"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
   "dependencies": {
     "highland": "~1.29.0",
     "duplexify": "~3.2.0",
-    "es6-promise": "~1.0.0"
+    "es6-promise": "~1.0.0",
+    "ws": "~0.4.32"
   }
 }
