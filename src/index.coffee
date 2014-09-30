@@ -6,7 +6,8 @@ constructStream = (ws) ->
 
   opened = new Promise (resolve) -> ws.on 'open', resolve
   opened.then ->
-    ws.on 'message', (msg) -> readable.write JSON.parse msg
+    ws.on 'message', (msg) ->
+      readable.write JSON.parse msg
 
   writeError = (x) -> output.emit 'error', x
 
@@ -14,10 +15,10 @@ constructStream = (ws) ->
   writeable = _()
 
   writeable.each (x) -> opened.then ->
-      try
-        ws.send x
-      catch error
-        writeError error
+    try
+      ws.send JSON.stringify x
+    catch error
+      writeError error
 
   output = duplexify writeable, readable, objectMode: true
   writeable.resume()

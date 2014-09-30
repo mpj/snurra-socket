@@ -49,9 +49,12 @@ describe 'ws-json-client-stream', ->
         beforeEach -> instance.write
           "command": "subscribe"
 
-        it 'sends the written value', ->
-          ws.send.calledWith
-            "command": "subscribe"
+        it 'sends the written value', (done) ->
+          process.nextTick ->
+            expect(ws.send.calledWith JSON.stringify
+              "command": "subscribe"
+            ).to.be.true
+            done()
 
         describe 'given that ws emits a message event', ->
           beforeEach ->
