@@ -63,7 +63,8 @@ describe 'ws-json-client-stream', ->
 
           it 'pushed it out on the stream', ->
             expect(output[0]).to.deep.equal
-              "property": 123
+              message:
+                "property": 123
 
       describe 'given that sending will throw an error', ->
         fakeError = new Error('I am a fake error')
@@ -80,6 +81,13 @@ describe 'ws-json-client-stream', ->
               expect(outputErrors[0]).to.equal(fakeError)
               done()
 
+      describe 'given that we emits a close event (after open)', ->
+        beforeEach ->
+          ws.emit 'close'
+
+        it 'output stream emits it', ->
+          expect(output[0]).to.deep.equal
+            close: true
 
     describe 'given that ws emits an error', ->
       fakeError = null

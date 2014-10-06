@@ -7,7 +7,11 @@ constructStream = (ws) ->
   opened = new Promise (resolve) -> ws.on 'open', resolve
   opened.then ->
     ws.on 'message', (msg) ->
-      readable.write JSON.parse msg
+      readable.write
+        message: JSON.parse msg
+    ws.on 'close', ->
+      readable.write
+        close: true
 
   writeError = (x) -> output.emit 'error', x
 
