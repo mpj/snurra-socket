@@ -1,34 +1,23 @@
-duplexify = require 'duplexify'
 Promise = require('es6-promise').Promise
 _ = require 'highland'
 
-constructStream = (ws) ->
+constructStream = (ws, bus) ->
 
   opened = new Promise (resolve) -> ws.on 'open', resolve
   opened.then ->
-    ws.on 'message', (msg) ->
-      readable.write
-        message: JSON.parse msg
-    ws.on 'close', ->
-      readable.write
-        close: true
+    _('message', ws).map(JSON.parse).pipe(bus('message'))
+    _('close', ws).pipe(bus('close'))
 
-  writeError = (x) -> output.emit 'error', x
+  errors = _()
+  errors.map((x) -> message: x.message).pipe bus('error')
 
-  readable  = _()
-  writeable = _()
-
-  writeable.each (x) -> opened.then ->
+  _(bus('send')).each (x) -> opened.then ->
     try
       ws.send JSON.stringify x
     catch error
-      writeError error
+      errors.write error
 
-  output = duplexify writeable, readable, objectMode: true
-  writeable.resume()
-  ws.on 'error', writeError
+  _('error', ws).pipe(errors)
 
-  readable.resume()
-  output
 
 module.exports = constructStream

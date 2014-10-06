@@ -1,37 +1,34 @@
-
-require 'coffee-errors'
-
 sinon = require 'sinon'
 chai = require 'chai'
 expect = chai.expect
 chai.should()
+snurra = require 'snurra'
+_ = require 'highland'
+deepMatches = require 'mout/object/deepMatches'
 
 constructor = require '../src/index'
 
+streamIt = (name, fn) -> it name, (done) -> fn().each -> done()
+deepMatcher = (pattern) -> (target) -> deepMatches target, pattern
+
 describe 'ws-json-client-stream', ->
-  clock = null
   ws = null
   instance = null
-  output = null
-  outputErrors = null
+  bus = null
+  log = null
   beforeEach ->
-    outputErrors = []
-    output = []
+    log = _()
+    bus = snurra()
+    bus.envelopes().pipe(log)
     ws =
       _handlers: {}
       on: sinon.spy (eventName, fn) -> ws._handlers[eventName] = fn
       emit: (eventName, value)      -> ws._handlers[eventName](value)
       send: sinon.stub()
-    clock = sinon.useFakeTimers()
-
-  afterEach  ->
-    clock.restore()
 
   describe 'given an instance', ->
     beforeEach ->
-      instance = constructor ws
-      instance.on 'data', output.push.bind(output)
-      instance.on 'error', outputErrors.push.bind(outputErrors)
+      instance = constructor ws, bus
 
     it 'waits to subscribe to messages', ->
       expect(ws.on.calledWith('message')).to.be.false
@@ -46,23 +43,26 @@ describe 'ws-json-client-stream', ->
           done()
 
       describe 'given that we write to the stream (after open)', ->
-        beforeEach -> instance.write
+        beforeEach -> bus('send').write
           "command": "subscribe"
 
         it 'sends the written value', (done) ->
-          process.nextTick ->
+          setTimeout ->
             expect(ws.send.calledWith JSON.stringify
               "command": "subscribe"
             ).to.be.true
             done()
+          , 10
 
         describe 'given that ws emits a message event', ->
-          beforeEach ->
+          beforeEach (done) ->
             ws.emit 'message', JSON.stringify
               "property": 123
+            setTimeout done, 10
 
-          it 'pushed it out on the stream', ->
-            expect(output[0]).to.deep.equal
+          streamIt 'pushed it out on the stream', (done) ->
+            log.filter deepMatcher
+              topic: 'message'
               message:
                 "property": 123
 
@@ -73,21 +73,22 @@ describe 'ws-json-client-stream', ->
 
         describe 'given that we write to the stream (after open)', ->
           beforeEach ->
-            instance.write
+            bus('send').write
               "command": "subscribe"
 
-          it 'streams the error', (done) ->
-            process.nextTick ->
-              expect(outputErrors[0]).to.equal(fakeError)
-              done()
+          streamIt 'streams the error', (done) ->
+            log.filter deepMatcher
+              topic: 'error'
+              message:
+                message: 'I am a fake error'
 
       describe 'given that we emits a close event (after open)', ->
         beforeEach ->
           ws.emit 'close'
 
-        it 'output stream emits it', ->
-          expect(output[0]).to.deep.equal
-            close: true
+        streamIt 'output stream emits it', ->
+          log.filter deepMatcher
+            topic: 'close'
 
     describe 'given that ws emits an error', ->
       fakeError = null
@@ -95,11 +96,14 @@ describe 'ws-json-client-stream', ->
         fakeError = new Error("This is a fake error")
         ws.emit 'error', fakeError
 
-      it 'output stream emits it as error', ->
-        expect(outputErrors[0]).to.equal(fakeError)
+      streamIt 'output stream emits it as error', ->
+        log.filter deepMatcher
+          topic: 'error'
+          message:
+            message: "This is a fake error"
 
     describe 'given that we write to the stream (before open)', ->
-      beforeEach -> instance.write
+      beforeEach -> bus('send').write
         "command": "subscribe"
 
       describe 'given an open event (after write)', ->

@@ -15,15 +15,14 @@
     "mocha": "~1.20.1",
     "chai": "~1.9.1",
     "coffee-script": "~1.7.1",
-    "sinon": "~1.10.3",
-    "coffee-errors": "~0.8.6"
+    "sinon": "~1.10.3"
   },
   "author": "Mattias Petter Johansson <mpj@spotify.com>",
   "license": "MIT",
   "dependencies": {
     "highland": "~1.29.0",
-    "duplexify": "~3.2.0",
     "es6-promise": "~1.0.0",
-    "ws": "~0.4.32"
+    "ws": "~0.4.32",
+    "snurra": "~3.2.0"
   }
 }
