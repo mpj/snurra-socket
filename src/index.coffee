@@ -3,21 +3,24 @@ _ = require 'highland'
 
 constructStream = (ws, bus) ->
 
-  opened = new Promise (resolve) -> ws.on 'open', resolve
-  opened.then ->
-    _('message', ws).map(JSON.parse).pipe(bus('message'))
-    _('close', ws).pipe(bus('close'))
+  _(bus('connect')).each (uri) ->
+    conn = ws.createConnection uri
 
-  errors = _()
-  errors.map((x) -> message: x.message).pipe bus('error')
+    opened = new Promise (resolve) -> conn.on 'open', resolve
+    opened.then ->
+      _('message', conn).map(JSON.parse).pipe(bus('message'))
+      _('close', conn).pipe(bus('close'))
 
-  _(bus('send')).each (x) -> opened.then ->
-    try
-      ws.send JSON.stringify x
-    catch error
-      errors.write error
+    errors = _()
+    errors.map((x) -> message: x.message).pipe bus('error')
 
-  _('error', ws).pipe(errors)
+    _(bus('send')).each (x) -> opened.then ->
+      try
+        conn.send JSON.stringify x
+      catch error
+        errors.write error
+
+    _('error', conn).pipe(errors)
 
 
 module.exports = constructStream
