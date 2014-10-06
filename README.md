@@ -1,19 +1,20 @@
-ws-json-client-stream
+snurra-socket
 ==========================
 
 A wrapper around the ws npm module that adds JSON-parsing stream interface.
 
 ### Example usage
 Below is an example that subscribes to all the transactions happening on the Stellar network. [Stellar API endpoint documentation](https://www.stellar.org/api/#api-subscribe)
-```javascript
-var _ = require( 'highland' ),
-    socket = require( 'ws-json-client-stream' ),
-    stellarSocket = socket( 'ws://live.stellar.org:9001' );
+```coffeescript
+_ = require 'highland'
+socket = require('./index')()
 
-_(stellarSocket).each(console.log);
+_(socket('message')).each console.log
 
-stellarSocket.write({
-  "command" : "subscribe",
+socket('connect').write 'ws://live.stellar.org:9001'
+
+socket('send').write
+  "command" : "subscribe"
   "streams" :  [ "transactions" ]
-});
+
 ```

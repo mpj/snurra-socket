@@ -1,6 +1,6 @@
 {
-  "name": "ws-json-client-stream",
-  "version": "3.0.0",
+  "name": "snurra-socket",
+  "version": "1.0.0",
   "description": "A wrapper around the ws npm module that adds JSON-parsing stream interface.",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:mpj/ws-json-client-stream.git"
+    "url": "git@github.com:mpj/snurra-socket.git"
   },
   "devDependencies": {
     "mocha": "~1.20.1",
