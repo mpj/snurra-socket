@@ -1,6 +1,6 @@
 {
   "name": "ws-json-client-stream",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "A wrapper around the ws npm module that adds JSON-parsing stream interface.",
   "main": "index.js",
   "scripts": {
