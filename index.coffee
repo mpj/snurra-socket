@@ -1,6 +1,8 @@
 constructor = require './src/index'
-WebSocket = require 'ws'
+ws = require 'ws'
+snurra = require 'snurra'
 
-module.exports = (uri) ->
-  ws = new WebSocket(uri)
-  constructor ws
+module.exports = ->
+  bus = snurra()
+  constructor ws, bus
+  bus

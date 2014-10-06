@@ -1,10 +1,12 @@
-socket = require './index'
 _ = require 'highland'
+socket = require('./index')()
 
-stellarSocket = socket 'ws://live.stellar.org:9001'
+_(socket('message')).each console.log
 
-_(stellarSocket).each console.log
+socket('connect').write 'ws://live.stellar.org:9001'
 
-stellarSocket.write
-  "command" : "subscribe"
-  "streams" :  [ "transactions" ]
+setTimeout ->
+  socket('send').write
+    "command" : "subscribe"
+    "streams" :  [ "transactions" ]
+,100
