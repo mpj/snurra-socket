@@ -127,3 +127,19 @@ describe 'ws-json-client-stream', ->
           it 'sends a the written value', ->
             connection.send.calledWith
               "command": "subscribe"
+
+    describe 'given that we open and send after one another', ->
+      beforeEach (done) ->
+        bus('connect').write 'ws://live.stellar.org:9001'
+        bus('send').write
+          property: 1234
+        setTimeout done, 10
+
+      describe 'given an open event (before write)', ->
+        beforeEach (done) ->
+          connection.emit 'open'
+          setTimeout done, 10
+
+        it 'should have buffered the send', ->
+          assert connection.send.calledWith JSON.stringify
+            property: 1234
