@@ -1,8 +1,7 @@
 Promise = require('es6-promise').Promise
 _ = require 'highland'
 
-constructStream = (ws, bus) ->
-
+installer = (ws, bus) ->
 
   sendBuffer = bus('send')
 
@@ -26,4 +25,4 @@ constructStream = (ws, bus) ->
     _('error', conn).pipe(errors)
 
 
-module.exports = constructStream
+module.exports = installer
